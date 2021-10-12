@@ -44,3 +44,4 @@ This can also be used to set the debounce time to 0ms, if you don't like the VER
 ## Additional Notes
 - The scroll wheel on the HOTAS is not passed through the filter. They will print with `(UNFILTERED)` warning next to them, but you can still assign them through the virtual joystick.
 - If the physical device is ever disconnected while this program is running, this program will stop and will need to be rerun.
+- This script only passes BUTTONS through... You will still need to use the original axes from the X-56 Throttle ingame. I may whip up an axis passthrough in the future, but for now, this is it.
