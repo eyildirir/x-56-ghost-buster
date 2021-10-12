@@ -1,4 +1,4 @@
-# hotas-io-tools
+# HOTAS I/O Tools
 I/O tool for debouncing &amp; repeating X-56 Hands-On Throttle input.
 
 ## What it does...
