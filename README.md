@@ -1,4 +1,4 @@
-# X-56 Throttle Anti-GHosting Tool
+# X-56 Throttle Anti-Ghosting Tool
 I/O tool for debouncing &amp; repeating X-56 Hands-On Throttle input.
 
 ## What it does...
