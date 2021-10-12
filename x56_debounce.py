@@ -44,38 +44,37 @@ button_timers = [-1] * button_count
 button_states = np.zeros(button_count)
 button_set = np.zeros(button_count)
 
-print("")
-print("Looping...")
+print("\nLooping...")
 
 while  vJoy_found and x56_found:
-    loop_start = t.time_ns()/1000.0
+    loop_start = t.time_ns()/1000
     for event in evt.get():
         if event.type == pg.JOYBUTTONDOWN:
             for i in range(button_count):
                 if x56.get_button(i):
-                    button_timers[i] = t.time_ns()/1000.0
+                    button_timers[i] = loop_start
+                    # print("Button %d down" % (i+1))
         if event.type == pg.JOYBUTTONUP:
             for i in range(button_count):
                 if not x56.get_button(i):
                     button_timers[i] = -1.0
+                    # print("Button %d up" % (i+1))
 
     button_states_mem = np.copy(button_states)
 
     for i in range(button_count):
         if button_timers[i] == -1.0:
             button_states[i] = 0
-
-        elif t.time_ns()/1000.0 - button_timers[i] > dbTime:
+        elif loop_start - button_timers[i] > dbTime:
             button_states[i] = 1
         elif i<=30 and i>=29:
             button_states[i] = 1
 
-
-    button_states_diff = np.logical_xor(button_states, button_states_mem)
+    button_states_diff = np.logical_and(np.logical_xor(button_states, button_states_mem),np.logical_not(button_states_mem))
     
-    if np.sum(button_states_diff[0:button_count])> 1:
-        button_states = np.copy(button_states_mem)
-
+    if np.sum(button_states_diff[0:button_count-3])> 1:
+        button_states[0:button_count-3] = np.copy(button_states_mem[0:button_count-3])
+        # print("Button diff is %d, which is greater than 1!" % np.sum(button_states_diff[0:button_count-3]))
     
     if np.sum(button_states[button_count-3:button_count]) > 1:
         button_states[button_count-3:button_count] = np.copy(button_states_mem[button_count-3:button_count])
@@ -120,9 +119,11 @@ while  vJoy_found and x56_found:
         if vJoy_found and x56_found:
             break
 
-    loop_time = (t.time_ns()/1000.0 - loop_start)/1000.0
-    if loop_time < 10:
-        t.sleep(0.010 - loop_time/1000)
-    # print("\rLoop time: %d ms" % loop_time)
+    loop_end = t.time_ns()/1000
+    loop_time = (loop_end - loop_start)
+    if loop_time < 10*(10**3):
+        t.sleep(0.01 - loop_time/(10**6))
+    else:
+        print("\rLoop time: %.3f ms!!!" % (loop_time/(10**3)))
 
 print("\nDevice plugged out (x56_found: %d, vJoy_found: %d). Stopping..." % (x56_found,vJoy_found))
