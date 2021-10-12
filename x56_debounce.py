@@ -67,10 +67,13 @@ while  vJoy_found and x56_found:
 
         elif t.time_ns()/1000.0 - button_timers[i] > dbTime:
             button_states[i] = 1
+        elif i<=30 and i>=29:
+            button_states[i] = 1
+
 
     button_states_diff = np.logical_xor(button_states, button_states_mem)
     
-    if np.sum(button_states_diff[0:button_count-7]) + button_states_diff[31] > 1:
+    if np.sum(button_states_diff[0:button_count])> 1:
         button_states = np.copy(button_states_mem)
 
     
@@ -82,12 +85,22 @@ while  vJoy_found and x56_found:
             if button_states[i] == 1 and button_set[i] == 0:
                 j.set_button(i+1,1)
                 button_set[i] = 1
-                print("Button %d is set to 1"% i)
+                print("Button %d is set to 1" % (i+1))
 
             elif button_states[i] == 0 and button_set[i] == 1:
                 j.set_button(i+1,0)
                 button_set[i] = 0
-                print("Button %d is set to 0" % i)
+                print("Button %d is set to 0" % (i+1))
+        else:
+            if button_states[i] == 1 and button_set[i] == 0:
+                j.set_button(i+1,1)
+                button_set[i] = 1
+                print("Button %d is set to 1(UNFILTERED)"% (i+1))
+
+            elif button_states[i] == 0 and button_set[i] == 1:
+                j.set_button(i+1,0)
+                button_set[i] = 0
+                print("Button %d is set to 0(UNFILTERED)" % (i+1))
         
 
     x56_found = False
@@ -112,4 +125,4 @@ while  vJoy_found and x56_found:
         t.sleep(0.010 - loop_time/1000)
     # print("\rLoop time: %d ms" % loop_time)
 
-print("\nDevice plugged out. Stopping...")
+print("\nDevice plugged out (x56_found: %d, vJoy_found: %d). Stopping..." % (x56_found,vJoy_found))
