@@ -20,11 +20,9 @@ if len(sys.argv) == 2:
 else:
   dbTime = 50000
 
-
 joys = [js.Joystick(i) for i in range(js.get_count())]
 
 for i in range(js.get_count()):
-  joys[i] = js.Joystick(i)
   joys[i].init()
 
   if (joys[i].get_name() == "X56 H.O.T.A.S. Throttle") or (joys[i].get_name() == "Saitek Pro Flight X-56 Rhino Throttle"):
@@ -46,6 +44,7 @@ button_count = vJoy.get_numbuttons()
 button_timers = [-1] * button_count
 button_states = np.zeros(button_count)
 button_set = np.zeros(button_count)
+timeout_timer = 0
 
 print("\nLooping...")
 
@@ -61,12 +60,13 @@ while vJoy_found and x56_found:
       for i in range(button_count):
         if not x56.get_button(i):
           button_timers[i] = -1.0
+          timeout_timer = loop_start
           # print("Button %d up" % (i+1))
 
   button_states_mem = np.copy(button_states)
 
   for i in range(button_count):
-    if button_timers[i] == -1.0:
+    if button_timers[i] == -1.0 and loop_start - timeout_timer > dbTime:
       button_states[i] = 0
     elif loop_start - button_timers[i] > dbTime:
       button_states[i] = 1
